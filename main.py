@@ -36,8 +36,8 @@ def author_create(data: AuthorCreateSchema, db: Session = Depends(get_db)):
 
 
 @app.get("/author/list/", response_model=List[AuthorListSchema])
-def get_authors(db: Session = Depends(get_db)):
-    return get_list_author_from_db(db=db)
+def get_authors(db: Session = Depends(get_db), skip: int = 0 , limit: int = 10):
+    return get_list_author_from_db(db=db, skip=skip, limit=limit)
 
 
 @app.get("/author/{author_id}/", response_model=AuthorListSchema)
@@ -47,7 +47,7 @@ def retrieve_author_by_id(author_id: int, db: Session = Depends(get_db)):
     if not author:
         raise HTTPException(status_code=400, detail=f"Author with the given ID: {author_id} not found!")
 
-    return get_author_by_id_from_db(author_id=author_id, db=db)
+    return author
 
 
 
@@ -59,16 +59,11 @@ def create_book(data: BookCreateSchema, db: Session = Depends(get_db)):
 
 
 @app.get("/book/list/", response_model=List[BookCreateResponseSchema])
-def get_books(db: Session = Depends(get_db)):
-    return get_list_books_from_db(db=db)
+def get_books(db: Session = Depends(get_db), skip: int = 0 , limit: int = 10):
+    return get_list_books_from_db(db=db, skip=skip, limit=limit)
 
 
-@app.get("/book/{author_id}/")
-def get_authors_book(author_id, db: Session = Depends(get_db)):
-
-    request = db.execute(select(Book).where(Book.author_id == author_id))
-    book = request.scalars().first()
-    if not book:
-        raise HTTPException(status_code=400, detail=f"Book with author id {author_id} not found!")
+@app.get("/book/{author_id}/", response_model=List[BookCreateResponseSchema])
+def get_authors_book(author_id: int, db: Session = Depends(get_db)):
 
     return get_book_by_author_id_from_db(author_id=author_id, db=db)

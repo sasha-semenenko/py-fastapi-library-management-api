@@ -44,8 +44,8 @@ def add_book_to_db(data: BookCreateSchema, db: Session) -> Book:
 
 
 def get_list_books_from_db(db: Session, skip: int = 0 , limit: int = 10):
-    authors = db.execute(select(Book).offset(skip).limit(limit)).scalars().all()
-    return [author for author in authors]
+    books = db.execute(select(Book).offset(skip).limit(limit)).scalars().all()
+    return [book for book in books]
 
 
 def get_book_by_author_id_from_db(author_id: int, db: Session):

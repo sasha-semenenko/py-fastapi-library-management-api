@@ -36,4 +36,4 @@ class BookCreateSchema(BookBaseSchema):
 
 class BookCreateResponseSchema(BookBaseSchema):
     id: int
-    authors: AuthorListSchema
+    author: AuthorBaseSchema
