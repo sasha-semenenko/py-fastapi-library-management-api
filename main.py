@@ -6,11 +6,15 @@ from sqlalchemy.orm import Session
 
 from crud import create_author, add_book_to_db, get_list_author_from_db, get_list_books_from_db, \
     get_book_by_author_id_from_db, get_author_by_id_from_db
-from database import SessionLocal
+from database import SessionLocal, engine
 from models import Author, Book
 from schemas import AuthorCreateResponseSchema, AuthorCreateSchema, AuthorListSchema, \
     BookCreateResponseSchema, BookCreateSchema
 
+from models import Base
+
+
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
@@ -55,6 +59,12 @@ def retrieve_author_by_id(author_id: int, db: Session = Depends(get_db)):
 
 @app.post("/book/create/", response_model=BookCreateResponseSchema)
 def create_book(data: BookCreateSchema, db: Session = Depends(get_db)):
+    request = db.execute(select(Author).where(Author.id == data.author_id))
+    author = request.scalars().first()
+
+    if not author:
+        raise HTTPException(status_code=404, detail=f"Author with the given ID: {data.author_id} does not exist")
+
     return add_book_to_db(data=data, db=db)
 
 

@@ -13,7 +13,7 @@ class Author(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(255), unique=True)
     bio: Mapped[str] = mapped_column(String(255))
-    books: Mapped[List["Book"]] = relationship(back_populates="authors")
+    books: Mapped[List["Book"]] = relationship(back_populates="author")
 
 
 class Book(Base):
@@ -24,4 +24,4 @@ class Book(Base):
     summary: Mapped[str] = mapped_column(String(255))
     publication_date: Mapped[date] = mapped_column(Date)
     author_id: Mapped[int] = mapped_column(ForeignKey("authors.id"), nullable=False)
-    authors: Mapped["Author"] = relationship(back_populates="books")
+    author: Mapped["Author"] = relationship(back_populates="books")
